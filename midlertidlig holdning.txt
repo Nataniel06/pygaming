@@ -1,0 +1,65 @@
+x  = 270
+y = 1000
+if x > 750:
+        box_farge = (255,0,0)
+    if x < 0:
+        box_farge = (0,255,0)
+    if y > 450:
+        box_farge = (0,0,255)
+    if y < 0:
+        box_farge = (255,255,0)
+
+    keys = pg.key.get_pressed()
+    if keys[pg.K_d]:
+        x += fart
+    if keys[pg.K_w]:
+        y -= fart
+    if keys[pg.K_a]:
+        x -= fart
+    if keys[pg.K_s]:
+        y += fart
+
+    
+
+
+
+    if x > 750:
+        x = 750
+    if x < 0:
+        x = 0
+    if y > 950:
+        y = 950
+    if y < 0:
+        y = 0
+
+
+    all_sprites.add(japan)
+all_sprites.add(romania)
+all_sprites.add(gog)
+
+
+
+pm.init
+    pm.music.load("6 - Psychodrome.mp3")
+
+    
+    pm.music.play
+    pm.music.get_volume
+    pm.music.set_volume(1.0)
+pm.music.get_volume(0.9)
+    skjerm.blit(spiller_img, ( x, y ))
+
+
+
+    treff2 = pg.sprite.spritecollide(gamer, health_orb, True)
+    if treff2:
+        score += 50
+        gamer.liv += 1
+
+death1 = pg.image.load("0003.png") 
+death2 = pg.image.load("0007.png")
+death3 = pg.image.load("0010.png")
+death4 = pg.image.load("0014.png")
+death5 = pg.image.load("0017.png")
+death6 = pg.image.load("0021.png")
+death7 = pg.image.load("0025.png")
