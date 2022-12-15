@@ -63,3 +63,15 @@ death4 = pg.image.load("0014.png")
 death5 = pg.image.load("0017.png")
 death6 = pg.image.load("0021.png")
 death7 = pg.image.load("0025.png")
+
+now = pg.time.get_ticks()
+        if now - self.sist_angrep > self.angreps_interval:
+            print("attacked")
+            self.sist_angrep = pg.time.get_ticks()
+            self.angrep(self.game, "small")    
+
+  self.sist_angrep = 0
+
+        self.angrep = 0
+
+        self.angreps_interval = 500

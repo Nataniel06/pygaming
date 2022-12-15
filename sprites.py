@@ -11,20 +11,23 @@ fiende_img = pg.image.load("astroide.png")
 fiende_img = pg.transform.scale(fiende_img,(200,200))
 kamikaze_img = pg.image.load("asroide2.png")
 kamikaze_img = pg.transform.scale(kamikaze_img,(110,110))
-chaser_img = pg.image.load("badwing.png")
-chaser_img = pg.transform.scale(chaser_img,(80,120))
+chaser_img = pg.image.load("Fiende2.png")
+chaser_img = pg.transform.scale(chaser_img,(100,120))
+chaser2_img = pg.image.load("Fiende1.png")
+chaser2_img = pg.transform.scale(chaser2_img,(100,120))
 healing_img = pg.image.load("healing.png")
 healing_img = pg.transform.scale(healing_img, (50, 50))
 bullet_img = pg.image.load("pang.png")
 bullet_img = pg.transform.scale(bullet_img, (15, 35))
 score_img = pg.image.load("xp.png")
 score_img = pg.transform.scale(score_img, (40, 40))
-boss_img = pg.image.load("badwingboss.png")
-boss_img = pg.transform.scale(boss_img, (600, 700))
-boss_img = pg.transform.rotate(boss_img, 180 )
+meny_spiller_img = pg.image.load("spiler.png")
+meny_spiller_img = pg.transform.scale(meny_spiller_img,(200,220))
+
+
 kamikaze_img = pg.transform.rotate(kamikaze_img, 180 )
 
-skyte = mixer.Sound("Laser_Shoot3.wav")
+skyte = mixer.Sound("skyt.mp3")
 
 
 death1 = pg.image.load("Explosion3/0003.png")
@@ -87,7 +90,7 @@ class explosion(pg.sprite.Sprite):
     def animate(self):
         nu = pg.time.get_ticks()   # på starten av animate henter vi hvilken "tick" eller frame vi er på 1 tick er 1 FPS
         if self.explode == True:
-            if nu - self.last_update > 50:
+            if nu - self.last_update > 40:
                 self.last_update = nu
                 self.current_frame = (self.current_frame + 1) % len(self.explosion_frames)
                 self.image = self.explosion_frames[self.current_frame]
@@ -117,7 +120,8 @@ class bullet(pg.sprite.Sprite):
 
 
     def update(self):
-        self.rect.y -= 5        
+        self.rect.y -= 5     
+    
 
 class spiller(pg.sprite.Sprite):
     def __init__(self, game): # blir gjort da spillet starter
@@ -129,8 +133,10 @@ class spiller(pg.sprite.Sprite):
         self.rect.center = self.pos
         self.speed = 9
         self.liv = 3
-
+        self.sist_angrep = 0
+        self.angreps_interval = 300
         
+
 
    
 
@@ -150,9 +156,9 @@ class spiller(pg.sprite.Sprite):
 
         if keys[pg.K_SPACE]:
             self.shoot_bullet()
+            
 
-       
-
+        
         
             
 
@@ -166,8 +172,14 @@ class spiller(pg.sprite.Sprite):
             self.pos.y = 0
 
     def shoot_bullet(self):
-        bullet(self, self.game)
-        mixer.Sound.play(skyte)
+        now = pg.time.get_ticks()
+        if now - self.sist_angrep > self.angreps_interval:
+            
+            self.sist_angrep = pg.time.get_ticks()
+            bullet(self, self.game)
+            mixer.Sound.play(skyte)                
+
+
 
     
 
@@ -182,7 +194,7 @@ class astroide(pg.sprite.Sprite):
         self.rect.center = self.pos
         self.speed = 2
         self.angle = 0
-        self.liv = 570
+        self.liv = 15
 
     def update(self):
         self.rect.center = self.pos # flytter spiller til ny posisjon
@@ -218,7 +230,7 @@ class kamikaze(pg.sprite.Sprite):
         self.rect.center = self.pos
         self.speed = 5
         self.angle = 0
-        self.liv = 250
+        self.liv = 5
 
 
     def update(self):
@@ -256,7 +268,7 @@ class kamikaze(pg.sprite.Sprite):
 class chaser(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        #self.game = game
+        
         self.image = chaser_img
         self.rect = self.image.get_rect()
         self.pos = vec(randint(200, 800), 1000)
@@ -266,8 +278,8 @@ class chaser(pg.sprite.Sprite):
         self.max_height = randint(600,800)
         self.current_frame = 0
         self.last_frame = 0
-        self.liv = 100
-        print (self.liv)
+        self.liv = 5
+        
 
 
     def update(self):
@@ -289,6 +301,7 @@ class chaser(pg.sprite.Sprite):
 
         if self.liv <= 0:
             self.kill()
+
 
 
 class healing_orb(pg.sprite.Sprite):
@@ -354,43 +367,36 @@ class scoreorb(pg.sprite.Sprite):
  
         return rotated_image, new_rect
 
-
-class boss(pg.sprite.Sprite):
-    def __init__(self):
+class menyspiller(pg.sprite.Sprite):
+    def __init__(self): # blir gjort da spillet starter
         pg.sprite.Sprite.__init__(self)
-        self.image = boss_img
-        self.rect = self.image.get_rect()
-        self.pos = vec(randint(800, 1000),  100)
+        
+        self.image = meny_spiller_img
+        self.rect = self.image.get_rect() # henter self.image sin størrelse
+        self.pos = vec(400, 500)
         self.rect.center = self.pos
-        self.speed = 0.3
-        self.right2 = False
-        self.max_height = randint(100,100)
+        self.speed = 9
 
     def update(self):
-        self.rect.center = self.pos # flytter spiller til ny posisjon
-        self.pos.y -= self.speed
-        
-        
+            self.rect.center = self.pos # flytter spiller til ny posisjon
+            self.pos.y += self.speed
+            
 
-        if self.right2 == False and self.pos.y < self.max_height:
-            self.speed = 0
-            self.pos.x -= 0.3
-        if self.pos.x < 100:
-            self.right2 = True
-        if self.right2 == True:
-            self.speed = 0
-            self.pos.x += 0.3
-        if self.pos.x > 700:
-            self.right2 = False
+            if self.pos.y > 1000:
+                self.pos.y = -100
+                self.pos.x = randint(0,800)
+            self.angle += 8
 
-    def animate(self):
-        now = pg.time.get_ticks()
-        if self.dead == True:
-            if now - self.last_update > 350:   # her sørger vi for at vi bytte bilde kun hver 350 tick, lavere tall animerer fortere
-                self.last_update = now
-                self.current_frame = (self.current_frame + 1) % len(self.deads)
-                self.image = self.dead[self.current_frame]
-                self.rect = self.image.get_rect()
+            self.image, self.rect = self.rot_center(score_img, self.angle, self.pos.x, self.pos.y)
+        
+    def rot_center(self, image, angle, x, y):   
+        rotated_image = pg.transform.rotate(image, angle)
+        new_rect = rotated_image.get_rect(center = self.image.get_rect(center = (x, y)).center)
+
+        return rotated_image, new_rect
+
+
+
            
 
                 
